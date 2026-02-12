@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        h2 {
+            color: #2ecc71;
+        }
+
+        .products {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .products th {
+            background-color: #f8f8f8;
+        }
+
+        .products th,
+        .products td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Siparişiniz Alındı!</h2>
+        <p>Merhaba {{userName}},</p>
+        <p>Siparişiniz başarıyla alınmıştır. Bizi tercih ettiğiniz için teşekkür ederiz.</p>
+
+        <p><strong>Sipariş No:</strong> {{orderId}}</p>
+
+        <h3>Sipariş Detayları</h3>
+        <table class="products">
+            <thead>
+                <tr>
+                    <th>Ürün</th>
+                    <th>Adet</th>
+                    <th>Fiyat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{productRows}}
+            </tbody>
+        </table>
+
+        <p style="text-align: right; font-size: 18px; font-weight: bold;">Toplam Tutar: {{totalPrice}} ₺</p>
+
+        <p>Siparişiniz kargoya verildiğinde sizi tekrar bilgilendireceğiz.</p>
+
+        <div class="footer">
+            <p>Gökçe Cotton</p>
+        </div>
+    </div>
+</body>
+
+</html>
