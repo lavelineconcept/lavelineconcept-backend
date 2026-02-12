@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { env } from '../utils/env.js';
 import { sendEmail } from '../utils/sendMail.js';
 import { UsersCollection } from '../db/models/user.js';
 import { ProductsCollection } from '../db/models/product.js';
@@ -64,7 +65,7 @@ export const sendOrderSuccessEmails = async (orderId) => {
             .replace('{{paymentStatus}}', paymentStatus);
 
         await sendEmail({
-            from: process.env.SMTP_FROM,
+            from: env('MAIL_USER'),
             to: 'lavelineconcept@gmail.com', // Admin email
             subject: `Yeni Sipariş: #${oId}`,
             html: adminHtml,
@@ -81,7 +82,7 @@ export const sendOrderSuccessEmails = async (orderId) => {
             .replace('{{totalPrice}}', totalPrice);
 
         await sendEmail({
-            from: process.env.SMTP_FROM,
+            from: env('MAIL_USER'),
             to: userEmail,
             subject: 'Siparişiniz Alındı - Laveline Concept',
             html: customerHtml,

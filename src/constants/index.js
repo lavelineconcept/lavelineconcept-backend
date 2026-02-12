@@ -9,11 +9,11 @@ export const ONE_DAY = 24 * 60 * 60 * 1000;
 export const ONE_MONTH = 30 * ONE_DAY;
 
 export const SMTP = {
-  SMTP_HOST: 'SMTP_HOST',
-  SMTP_PORT: 'SMTP_PORT',
-  SMTP_USER: 'SMTP_USER',
-  SMTP_PASSWORD: 'SMTP_PASSWORD',
-  SMTP_FROM: 'SMTP_FROM',
+  SMTP_HOST: 'MAIL_HOST',
+  SMTP_PORT: 'MAIL_PORT',
+  SMTP_USER: 'MAIL_USER',
+  SMTP_PASSWORD: 'MAIL_PASS',
+  SMTP_FROM: 'MAIL_USER',
 };
 export const TEMPLATES_DIR = path.join(process.cwd(), 'src', 'templates');
 export const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp');

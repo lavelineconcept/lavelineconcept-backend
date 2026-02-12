@@ -5,6 +5,9 @@ import { env } from '../utils/env.js';
 import { sendOrderSuccessEmails } from './mailService.js';
 
 export const processPayment = async (order, user, ip, cardDetails) => {
+    if (iyzico._disabled) {
+        throw createHttpError(503, 'Payment service is currently unavailable.');
+    }
     const request = {
         locale: 'tr',
         conversationId: order._id.toString(),
@@ -85,6 +88,9 @@ export const processPayment = async (order, user, ip, cardDetails) => {
 };
 
 export const verifyPayment = async (token) => {
+    if (iyzico._disabled) {
+        throw createHttpError(503, 'Payment service is currently unavailable.');
+    }
     return new Promise((resolve, reject) => {
         iyzico.checkoutForm.retrieve({
             locale: 'tr',
