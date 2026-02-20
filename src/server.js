@@ -38,6 +38,7 @@ export const startServer = () => {
   const allowedOrigins = [
     'http://localhost:5173',
     'https://lavelineconcept.com',
+    'https://lavelineconcept-frontend-git-0ad162-la-veline-concepts-projects.vercel.app/',
   ];
 
   app.use(
