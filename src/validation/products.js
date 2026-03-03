@@ -12,6 +12,7 @@ export const createProductSchema = Joi.object({
     price: Joi.number().min(0).required(),
     stock: Joi.number().min(0).default(0),
     brand: Joi.string().max(VALIDATION_RULES.PRODUCT_BRAND.MAX),
+    stockCode: Joi.string().allow('', null),
     categoryId: Joi.string().hex().length(VALIDATION_RULES.MONGO_ID_LENGTH).required(),
     images: Joi.array().items(Joi.string()).single(),
     attributes: Joi.object().pattern(Joi.string(), Joi.string()), // e.g., { "Size": "M" }
@@ -25,6 +26,7 @@ export const updateProductSchema = Joi.object({
     price: Joi.number().min(0),
     stock: Joi.number().min(0),
     brand: Joi.string().max(VALIDATION_RULES.PRODUCT_BRAND.MAX),
+    stockCode: Joi.string().allow('', null),
     categoryId: Joi.string().hex().length(VALIDATION_RULES.MONGO_ID_LENGTH),
     images: Joi.array().items(Joi.string()).single(),
     attributes: Joi.object().pattern(Joi.string(), Joi.string()),

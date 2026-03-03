@@ -8,6 +8,7 @@ const productSchema = new Schema(
         stock: { type: Number, required: true, default: 0 },
         brand: { type: String },
         categoryId: { type: Schema.Types.ObjectId, ref: 'categories', required: true },
+        stockCode: { type: String, unique: true, sparse: true }, // Optional and unique
         images: [{ type: String }], // Array of Cloudinary URLs
         attributes: { type: Map, of: String }, // e.g., { "Color": "Red", "Size": "M" }
     },
