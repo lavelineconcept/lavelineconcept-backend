@@ -14,6 +14,7 @@ export const SMTP = {
   SMTP_USER: 'MAIL_USER',
   SMTP_PASSWORD: 'MAIL_PASS',
   SMTP_FROM: 'MAIL_USER',
+  SMTP_SECURE: 'MAIL_SECURE',
 };
 export const TEMPLATES_DIR = path.join(process.cwd(), 'src', 'templates');
 export const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp');
