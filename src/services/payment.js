@@ -79,7 +79,7 @@ export const processPayment = async (order, user, ip, cardDetails) => {
             order.paymentStatus = 'Success';
             await order.save();
 
-            // Success e-postalarını gönder
+            // Send success emails
             await sendOrderSuccessEmails(order._id);
 
             resolve(result);

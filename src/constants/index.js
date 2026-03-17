@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const SORT_ORDER = {
   ASC: 'asc',
@@ -16,7 +17,7 @@ export const SMTP = {
   SMTP_FROM: 'MAIL_USER',
   SMTP_SECURE: 'MAIL_SECURE',
 };
-export const TEMPLATES_DIR = path.join(process.cwd(), 'src', 'templates');
+export const TEMPLATES_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'templates');
 export const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp');
 
 export const UPLOAD_LIMITS = {

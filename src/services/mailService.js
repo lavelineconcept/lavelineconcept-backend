@@ -1,12 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { env } from '../utils/env.js';
 import { sendEmail } from '../utils/sendMail.js';
 import { UsersCollection } from '../db/models/user.js';
 import { ProductsCollection } from '../db/models/product.js';
 import { OrdersCollection } from '../db/models/order.js';
 
-const TEMPLATES_DIR = path.resolve('src', 'templates');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
 
 export const sendOrderSuccessEmails = async (orderId) => {
     try {
@@ -50,24 +52,26 @@ export const sendOrderSuccessEmails = async (orderId) => {
             `;
         }).join('');
 
+        const from = `"La Véline Concept" <${env('MAIL_USER')}>`;
+
         // 1. Send Admin Email
         const adminTemplatePath = path.join(TEMPLATES_DIR, 'admin-order-notification.html');
         let adminHtml = await fs.readFile(adminTemplatePath, 'utf-8');
 
         adminHtml = adminHtml
-            .replace('{{orderId}}', oId)
-            .replace('{{userName}}', userName)
-            .replace('{{userEmail}}', userEmail)
-            .replace('{{userPhone}}', userPhone)
-            .replace('{{address}}', address)
-            .replace('{{productRows}}', productRows)
-            .replace('{{totalPrice}}', totalPrice)
-            .replace('{{paymentStatus}}', paymentStatus);
+            .replace(/{{orderId}}/g, oId)
+            .replace(/{{userName}}/g, userName)
+            .replace(/{{userEmail}}/g, userEmail)
+            .replace(/{{userPhone}}/g, userPhone || '')
+            .replace(/{{address}}/g, address)
+            .replace(/{{productRows}}/g, productRows)
+            .replace(/{{totalPrice}}/g, totalPrice)
+            .replace(/{{paymentStatus}}/g, paymentStatus);
 
         await sendEmail({
-            from: env('MAIL_USER'),
+            from,
             to: 'lavelineconcept@gmail.com', // Admin email
-            subject: `Yeni Sipariş: #${oId}`,
+            subject: `Laveline Concept - Yeni Sipariş #${oId}`,
             html: adminHtml,
         });
 
@@ -76,15 +80,15 @@ export const sendOrderSuccessEmails = async (orderId) => {
         let customerHtml = await fs.readFile(customerTemplatePath, 'utf-8');
 
         customerHtml = customerHtml
-            .replace('{{userName}}', userName)
-            .replace('{{orderId}}', oId)
-            .replace('{{productRows}}', productRows)
-            .replace('{{totalPrice}}', totalPrice);
+            .replace(/{{userName}}/g, userName)
+            .replace(/{{orderId}}/g, oId)
+            .replace(/{{productRows}}/g, productRows)
+            .replace(/{{totalPrice}}/g, totalPrice);
 
         await sendEmail({
-            from: env('MAIL_USER'),
+            from,
             to: userEmail,
-            subject: 'Siparişiniz Alındı - Laveline Concept',
+            subject: 'Siparişiniz Alındı - La Véline Concept',
             html: customerHtml,
         });
 
@@ -92,7 +96,5 @@ export const sendOrderSuccessEmails = async (orderId) => {
 
     } catch (error) {
         console.error('Error sending order emails:', error);
-        // Don't throw, just log. Email failure shouldn't crash the payment process if possible, 
-        // strictly speaking it depends on business logic but usually it's a side effect.
     }
 };

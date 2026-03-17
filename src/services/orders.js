@@ -106,7 +106,7 @@ export const createOrder = async (userId, payload) => {
     cart.items = [];
     await cart.save();
 
-    // Send emails for non-CC orders (e.g. cash on delivery if implemented later)
+    // Send emails for non-CC orders
     await sendOrderSuccessEmails(order._id);
 
     return { order };
