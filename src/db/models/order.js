@@ -24,6 +24,7 @@ const orderSchema = new Schema(
         },
         paymentStatus: { type: String, enum: ['Pending', 'Success', 'Failed'], default: 'Pending' },
         isGiftWrap: { type: Boolean, default: false },
+        customerNote: { type: String, default: '' },
         iyzicoToken: { type: String },
         iyzicoPaymentId: { type: String },
         ipAddress: { type: String },

@@ -39,6 +39,13 @@ export const sendOrderSuccessEmails = async (orderId) => {
         const paymentStatus = order.paymentStatus;
         const oId = order._id.toString();
 
+        const customerNoteHTML = order.customerNote 
+            ? `<div class="details" style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-left: 4px solid #d35400;">
+                 <h3 style="margin-top:0;">Müşteri Notu</h3>
+                 <p style="margin-bottom:0; font-style: italic;">${order.customerNote}</p>
+               </div>` 
+            : '';
+
         // Generate Product Rows HTML
         const productRows = order.items.map(item => {
             const product = productMap[item.productId.toString()];
@@ -64,6 +71,7 @@ export const sendOrderSuccessEmails = async (orderId) => {
             .replace(/{{userEmail}}/g, userEmail)
             .replace(/{{userPhone}}/g, userPhone || '')
             .replace(/{{address}}/g, address)
+            .replace(/{{customerNoteHTML}}/g, customerNoteHTML)
             .replace(/{{productRows}}/g, productRows)
             .replace(/{{totalPrice}}/g, totalPrice)
             .replace(/{{paymentStatus}}/g, paymentStatus);
@@ -84,6 +92,7 @@ export const sendOrderSuccessEmails = async (orderId) => {
         customerHtml = customerHtml
             .replace(/{{userName}}/g, userName)
             .replace(/{{orderId}}/g, oId)
+            .replace(/{{customerNoteHTML}}/g, customerNoteHTML)
             .replace(/{{productRows}}/g, productRows)
             .replace(/{{totalPrice}}/g, totalPrice);
 
