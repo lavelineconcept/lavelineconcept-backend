@@ -68,11 +68,13 @@ export const sendOrderSuccessEmails = async (orderId) => {
             .replace(/{{totalPrice}}/g, totalPrice)
             .replace(/{{paymentStatus}}/g, paymentStatus);
 
-        await sendEmail({
+        const adminEmailPromise = sendEmail({
             from,
             to: 'lavelineconcept@gmail.com', // Admin email
             subject: `Laveline Concept - Yeni Sipariş #${oId}`,
             html: adminHtml,
+        }).catch(error => {
+            console.error(`Failed to send Admin email for order ${oId}:`, error);
         });
 
         // 2. Send Customer Email
@@ -85,14 +87,19 @@ export const sendOrderSuccessEmails = async (orderId) => {
             .replace(/{{productRows}}/g, productRows)
             .replace(/{{totalPrice}}/g, totalPrice);
 
-        await sendEmail({
+        const customerEmailPromise = sendEmail({
             from,
             to: userEmail,
             subject: 'Siparişiniz Alındı - La Véline Concept',
             html: customerHtml,
+        }).catch(error => {
+            console.error(`Failed to send Customer email to ${userEmail} for order ${oId}:`, error);
         });
 
-        console.log(`Order emails sent for order #${oId}`);
+        // Send both emails concurrently. If one fails, the other can still succeed.
+        await Promise.all([adminEmailPromise, customerEmailPromise]);
+
+        console.log(`Order emails processed for order #${oId}`);
 
     } catch (error) {
         console.error('Error sending order emails:', error);
