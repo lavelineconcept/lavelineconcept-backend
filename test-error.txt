@@ -1,0 +1,16 @@
+[dotenv@17.2.4] injecting env (22) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+[DEBUG] Accessing env: MAIL_HOST = *** (default: undefined)
+[DEBUG] Accessing env: MAIL_PORT = *** (default: undefined)
+[DEBUG] Accessing env: MAIL_SECURE = *** (default: undefined)
+[DEBUG] Accessing env: MAIL_USER = *** (default: undefined)
+[DEBUG] Accessing env: MAIL_PASS = *** (default: undefined)
+Connecting to MongoDB...
+[DEBUG] Accessing env: MONGODB_USER = *** (default: undefined)
+[DEBUG] Accessing env: MONGODB_PASSWORD = *** (default: undefined)
+[DEBUG] Accessing env: MONGODB_URL = *** (default: undefined)
+[DEBUG] Accessing env: MONGODB_DB = *** (default: undefined)
+Connected to MongoDB.
+Testing email for latest order: 69bb299f1dfb1d4b08933938
+[DEBUG] Accessing env: MAIL_USER = *** (default: undefined)
+Order emails processed for order #69bb299f1dfb1d4b08933938
+Test finished.
