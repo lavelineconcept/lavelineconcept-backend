@@ -12,9 +12,12 @@ const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
 
 export const sendOrderSuccessEmails = async (orderId) => {
     try {
+        await fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] TRIGGERED sendOrderSuccessEmails for order ${orderId}\n`);
+        
         const order = await OrdersCollection.findById(orderId).lean();
         if (!order) {
             console.error(`Order not found for email: ${orderId}`);
+            await fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] FAIL: Order not found ${orderId}\n`);
             return;
         }
 
@@ -81,8 +84,11 @@ export const sendOrderSuccessEmails = async (orderId) => {
             to: 'lavelineconcept@gmail.com', // Admin email
             subject: `Laveline Concept - Yeni Sipariş #${oId}`,
             html: adminHtml,
+        }).then(() => {
+            return fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] Admin email sent for ${oId}\n`);
         }).catch(error => {
             console.error(`Failed to send Admin email for order ${oId}:`, error);
+            return fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] Admin email FAILED for ${oId}: ${error.message}\n`);
         });
 
         // 2. Send Customer Email
@@ -101,16 +107,21 @@ export const sendOrderSuccessEmails = async (orderId) => {
             to: userEmail,
             subject: 'Siparişiniz Alındı - La Véline Concept',
             html: customerHtml,
+        }).then(() => {
+            return fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] Customer email sent for ${oId}\n`);
         }).catch(error => {
             console.error(`Failed to send Customer email to ${userEmail} for order ${oId}:`, error);
+            return fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] Customer email FAILED for ${oId}: ${error.message}\n`);
         });
 
         // Send both emails concurrently. If one fails, the other can still succeed.
         await Promise.all([adminEmailPromise, customerEmailPromise]);
 
         console.log(`Order emails processed for order #${oId}`);
+        await fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] SUCCESS for order ${oId}\n`);
 
     } catch (error) {
         console.error('Error sending order emails:', error);
+        await fs.appendFile(path.join(process.cwd(), 'mail-debug.log'), `[${new Date().toISOString()}] ERROR: ${error.message}\n`);
     }
 };
