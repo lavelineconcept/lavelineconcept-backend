@@ -116,17 +116,24 @@ export const requestResetToken = async (email) => {
   ).toString();
 
   const template = handlebars.compile(templateSource);
+  const resetLink = `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`;
   const html = template({
     name: user.name,
-    link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
+    link: resetLink,
   });
 
-  await sendEmail({
-    from: env(SMTP.SMTP_FROM),
-    to: email,
-    subject: 'Yeni şifre belirleme',
-    html,
-  });
+  try {
+    await sendEmail({
+      from: `"La Véline Concept" <${env(SMTP.SMTP_FROM)}>`,
+      to: email,
+      subject: 'Yeni şifre belirleme - La Véline Concept',
+      html,
+    });
+    console.log(`[INFO] Password reset email sent securely to ${email}`);
+  } catch (error) {
+    console.error(`[ERROR] Failed to send password reset email to ${email}. Error:`, error.message);
+    throw createHttpError(500, 'Şifre sıfırlama e-postası gönderilemedi. Lütfen daha sonra tekrar deneyin.');
+  }
 };
 
 export const resetPassword = async (payload) => {

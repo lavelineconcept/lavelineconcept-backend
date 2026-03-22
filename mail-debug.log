@@ -1,0 +1,8 @@
+[2026-03-19T22:40:10.873Z] TRIGGERED sendOrderSuccessEmails for order 69bc7b4adf105a0ef01081fe
+[2026-03-19T22:40:13.446Z] Customer email sent for 69bc7b4adf105a0ef01081fe
+[2026-03-19T22:40:13.548Z] Admin email sent for 69bc7b4adf105a0ef01081fe
+[2026-03-19T22:40:13.551Z] SUCCESS for order 69bc7b4adf105a0ef01081fe
+[2026-03-22T12:39:24.129Z] TRIGGERED sendOrderSuccessEmails for order 69bfe2fa8be1792efc33b4bd
+[2026-03-22T12:39:26.173Z] Customer email sent for 69bfe2fa8be1792efc33b4bd
+[2026-03-22T12:39:26.550Z] Admin email sent for 69bfe2fa8be1792efc33b4bd
+[2026-03-22T12:39:26.552Z] SUCCESS for order 69bfe2fa8be1792efc33b4bd
