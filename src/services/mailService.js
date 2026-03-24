@@ -6,6 +6,7 @@ import { sendEmail } from '../utils/sendMail.js';
 import { UsersCollection } from '../db/models/user.js';
 import { ProductsCollection } from '../db/models/product.js';
 import { OrdersCollection } from '../db/models/order.js';
+import { SMTP } from '../constants/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
@@ -62,7 +63,7 @@ export const sendOrderSuccessEmails = async (orderId) => {
             `;
         }).join('');
 
-        const from = `"La Véline Concept" <${env('MAIL_USER')}>`;
+        const from = `"La Véline Concept" <${env(SMTP.SMTP_FROM)}>`;
 
         // 1. Send Admin Email
         const adminTemplatePath = path.join(TEMPLATES_DIR, 'admin-order-notification.html');
