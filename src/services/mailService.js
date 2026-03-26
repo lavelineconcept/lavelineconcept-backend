@@ -51,7 +51,7 @@ export const sendOrderSuccessEmails = async (orderId) => {
             : '';
 
         // Generate Product Rows HTML
-        const productRows = order.items.map(item => {
+        let productRows = order.items.map(item => {
             const product = productMap[item.productId.toString()];
             const title = product ? product.title : 'Deleted Product';
             return `
@@ -62,6 +62,28 @@ export const sendOrderSuccessEmails = async (orderId) => {
                 </tr>
             `;
         }).join('');
+
+        // Add Gift Wrap Row
+        if (order.isGiftWrap) {
+            productRows += `
+                <tr>
+                    <td>Hediye Paketi</td>
+                    <td>1</td>
+                    <td>50.00 ₺</td>
+                </tr>
+            `;
+        }
+
+        // Add Shipping Row
+        if (order.shippingCost > 0) {
+            productRows += `
+                <tr>
+                    <td>Kargo Ücreti</td>
+                    <td>1</td>
+                    <td>${order.shippingCost.toFixed(2)} ₺</td>
+                </tr>
+            `;
+        }
 
         const from = `"La Véline Concept" <${env(SMTP.SMTP_FROM)}>`;
 
