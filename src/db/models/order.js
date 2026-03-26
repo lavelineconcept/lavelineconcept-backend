@@ -35,6 +35,7 @@ const orderSchema = new Schema(
             country: { type: String, required: true },
         },
         contactNumber: { type: String, required: true },
+        shippingCost: { type: Number, default: 0 },
     },
     { timestamps: true, versionKey: false },
 );

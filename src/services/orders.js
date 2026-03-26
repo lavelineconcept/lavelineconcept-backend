@@ -47,19 +47,24 @@ export const createOrder = async (userId, payload) => {
         });
     }
 
-    // Add Gift Wrap Fee
     // Use cart's gift wrap status, or fallback to payload if not available (though it should be in cart)
     const isGiftWrap = cart.isGiftWrap || payload.isGiftWrap || false;
 
+    // 4. Calculate Shipping Cost
+    const shippingCost = totalPrice > 1500 ? 0 : 135;
+    totalPrice += shippingCost;
+
+    // Add Gift Wrap Fee AFTER shipping calculation to match frontend
     if (isGiftWrap) {
         totalPrice += 50;
     }
 
-    // 4. Create Order
+    // 5. Create Order
     const order = await OrdersCollection.create({
         userId,
         items: orderItems,
         totalPrice,
+        shippingCost,
         isGiftWrap,
         ...payload,
     });
@@ -78,6 +83,9 @@ export const createOrder = async (userId, payload) => {
         // Fetch user to pass to Iyzico
         const user = await import('../db/models/user.js').then(m => m.UsersCollection.findById(userId));
         const ip = payload.ip || '127.0.0.1';
+
+        // Populate items.productId to get titles for payment.js
+        await order.populate('items.productId');
 
         // Direct Payment with Card Details
         try {

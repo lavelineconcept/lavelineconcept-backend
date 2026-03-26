@@ -54,13 +54,29 @@ export const processPayment = async (order, user, ip, cardDetails) => {
             address: order.address.street,
             zipCode: order.address.zip,
         },
-        basketItems: order.items.map((item) => ({
-            id: item.productId.toString(),
-            name: 'Product', // Ürün adını buraya taşımak iyi olur
-            category1: 'General',
-            itemType: 'PHYSICAL',
-            price: item.price.toFixed(2),
-        })),
+        basketItems: [
+            ...order.items.map((item) => ({
+                id: item.productId._id.toString(),
+                name: item.productId.title || 'Product',
+                category1: 'General',
+                itemType: 'PHYSICAL',
+                price: (item.price * item.quantity).toFixed(2),
+            })),
+            ...(order.isGiftWrap ? [{
+                id: 'GIFT_WRAP',
+                name: 'Hediye Paketi',
+                category1: 'Service',
+                itemType: 'VIRTUAL',
+                price: '50.00',
+            }] : []),
+            ...(order.shippingCost > 0 ? [{
+                id: 'SHIPPING',
+                name: 'Kargo Ücreti',
+                category1: 'Service',
+                itemType: 'VIRTUAL',
+                price: order.shippingCost.toFixed(2),
+            }] : []),
+        ],
     };
 
     return new Promise((resolve, reject) => {
