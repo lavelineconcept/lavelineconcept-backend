@@ -51,7 +51,7 @@ export const createOrder = async (userId, payload) => {
     const isGiftWrap = cart.isGiftWrap || payload.isGiftWrap || false;
 
     // 4. Calculate Shipping Cost
-    const shippingCost = totalPrice > 1500 ? 0 : 135;
+    const shippingCost = totalPrice > 1500 ? 0 : 0; // Geçici olarak 0 yapıldı (normalde 135)
     totalPrice += shippingCost;
 
     // Add Gift Wrap Fee AFTER shipping calculation to match frontend
