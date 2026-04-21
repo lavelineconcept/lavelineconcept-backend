@@ -44,8 +44,20 @@ export const threedsCallbackController = async (req, res) => {
 
     const clientUrl = env('APP_URL', 'http://localhost:5173');
 
+    const sendBreakoutRedirect = (url) => {
+        return res.send(`
+            <html>
+                <body>
+                    <script>
+                        window.top.location.href = "${url}";
+                    </script>
+                </body>
+            </html>
+        `);
+    };
+
     if (status !== 'success' || mdStatus !== '1') {
-        return res.redirect(`${clientUrl}/payment/failed?error=3D Secure verification failed`);
+        return sendBreakoutRedirect(`${clientUrl}/payment/failed?error=3D Secure verification failed`);
     }
 
     try {
@@ -53,12 +65,12 @@ export const threedsCallbackController = async (req, res) => {
         const result = await completeThreedsPayment({ paymentId, conversationId });
 
         if (result.success) {
-            return res.redirect(`${clientUrl}/payment/success?orderId=${result.orderId}`);
+            return sendBreakoutRedirect(`${clientUrl}/payment/success?orderId=${result.orderId}`);
         } else {
-            return res.redirect(`${clientUrl}/payment/failed?error=Payment Completion Failed`);
+            return sendBreakoutRedirect(`${clientUrl}/payment/failed?error=Payment Completion Failed`);
         }
     } catch (err) {
-        return res.redirect(`${clientUrl}/payment/failed?error=${err.message}`);
+        return sendBreakoutRedirect(`${clientUrl}/payment/failed?error=${err.message}`);
     }
 };
 
