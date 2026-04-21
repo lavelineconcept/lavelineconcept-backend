@@ -1,5 +1,7 @@
 import iyzico from '../utils/iyzico.js';
 import { OrdersCollection } from '../db/models/order.js';
+import { ProductsCollection } from '../db/models/product.js';
+import { CartsCollection } from '../db/models/cart.js';
 import createHttpError from 'http-errors';
 import { env } from '../utils/env.js';
 import { sendOrderSuccessEmails } from './mailService.js';
@@ -8,6 +10,9 @@ export const processPayment = async (order, user, ip, cardDetails) => {
     if (iyzico._disabled) {
         throw createHttpError(503, 'Payment service is currently unavailable.');
     }
+
+    const callbackUrl = `${env('APP_DOMAIN', 'http://localhost:3000')}/api/orders/checkout/callback/3d`;
+
     const request = {
         locale: 'tr',
         conversationId: order._id.toString(),
@@ -17,21 +22,22 @@ export const processPayment = async (order, user, ip, cardDetails) => {
         basketId: order._id.toString(),
         paymentGroup: 'PRODUCT',
         paymentChannel: 'WEB',
+        callbackUrl: callbackUrl, // Required for 3D
         paymentCard: {
             cardHolderName: cardDetails.cardHolderName,
             cardNumber: cardDetails.cardNumber,
             expireMonth: cardDetails.expireMonth,
             expireYear: cardDetails.expireYear,
             cvc: cardDetails.cvc,
-            registerCard: '0' // Kartı kaydetme
+            registerCard: '0'
         },
         buyer: {
             id: user._id.toString(),
             name: user.name,
-            surname: user.surname || user.name, // Fallback
+            surname: user.surname || user.name,
             gsmNumber: order.contactNumber || user.telephone || '+905555555555',
             email: user.email,
-            identityNumber: '11111111111', // Zorunlu alan, kullanıcıdan alınmalı aslında
+            identityNumber: '11111111111',
             lastLoginDate: '2024-01-01 10:00:00',
             registrationDate: '2024-01-01 10:00:00',
             registrationAddress: order.address.street,
@@ -79,26 +85,68 @@ export const processPayment = async (order, user, ip, cardDetails) => {
         ],
     };
 
+    // We use ThreedsInitialize because many cards/merchants now require 3D Secure
     return new Promise((resolve, reject) => {
-        iyzico.payment.create(request, async (err, result) => {
+        iyzico.threedsInitialize.create(request, async (err, result) => {
             if (err) {
                 return reject(err);
             }
 
             if (result.status !== 'success') {
-                return reject(new Error(result.errorMessage || 'Ödeme başarısız'));
+                return reject(new Error(result.errorMessage || '3D Secure başlatılamadı'));
             }
 
-            // Ödeme başarılı
+            // Return the HTML content for 3D Secure redirect
+            resolve({
+                isThreeDS: true,
+                htmlContent: result.threeDSHtmlContent
+            });
+        });
+    });
+};
+
+export const completeThreedsPayment = async (payload) => {
+    const { paymentId, conversationId } = payload;
+
+    const request = {
+        locale: 'tr',
+        conversationId: conversationId,
+        paymentId: paymentId
+    };
+
+    return new Promise((resolve, reject) => {
+        iyzico.threedsPayment.create(request, async (err, result) => {
+            if (err) return reject(err);
+
+            if (result.status !== 'success') {
+                return reject(new Error(result.errorMessage || 'Ödeme tamamlanamadı'));
+            }
+
+            const order = await OrdersCollection.findById(conversationId);
+            if (!order) return reject(new Error('Sipariş bulunamadı'));
+
             order.iyzicoPaymentId = result.paymentId;
             order.status = 'Processing';
             order.paymentStatus = 'Success';
             await order.save();
 
+            // Deduct Stock
+            for (const item of order.items) {
+                await ProductsCollection.findByIdAndUpdate(item.productId, {
+                    $inc: { stock: -item.quantity },
+                });
+            }
+
+            // Clear User Cart
+            await CartsCollection.findOneAndUpdate(
+                { userId: order.userId },
+                { $set: { items: [] } }
+            );
+
             // Send success emails
             await sendOrderSuccessEmails(order._id);
 
-            resolve(result);
+            resolve({ success: true, orderId: order._id });
         });
     });
 };

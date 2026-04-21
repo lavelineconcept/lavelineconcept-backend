@@ -87,16 +87,19 @@ export const createOrder = async (userId, payload) => {
         // Populate items.productId to get titles for payment.js
         await order.populate('items.productId');
 
-        // Direct Payment with Card Details
+        // Payment Initialization
         try {
             const paymentResult = await import('./payment.js').then(m => m.processPayment(order, user, ip, payload.cardDetails));
 
-            // Payment Success: Deduct Stock
-            await deductStock(orderItems);
+            // If it's a direct success (non-3D, if supported), deduct stock
+            if (paymentResult && !paymentResult.isThreeDS) {
+                await deductStock(orderItems);
+                cart.items = [];
+                await cart.save();
+            }
 
-            // Clear cart
-            cart.items = [];
-            await cart.save();
+            // For 3D Secure (isThreeDS: true), we DO NOT deduct stock or clear cart yet.
+            // This will be done in the 3D callback (completeThreedsPayment).
 
             return { order, paymentResult };
         } catch (error) {

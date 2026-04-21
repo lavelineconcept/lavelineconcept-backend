@@ -10,9 +10,12 @@ import {
     getUserOrdersController,
     getOrderByIdController,
     updateOrderStatusController,
+    threedsCallbackController,
 } from '../controllers/orders.js';
 
 const ordersRouter = Router();
+
+ordersRouter.post('/checkout/callback/3d', ctrlWrapper(threedsCallbackController));
 
 ordersRouter.use(authenticate);
 

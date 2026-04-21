@@ -28,6 +28,18 @@ if (isEnabled && apiKey && secretKey) {
                 callback(error, { status: 'failure', errorMessage: error.message });
             }
         },
+        threedsInitialize: {
+            create: (request, callback) => {
+                const error = new Error('Iyzico payment service is currently disabled.');
+                callback(error, { status: 'failure', errorMessage: error.message });
+            }
+        },
+        threedsPayment: {
+            create: (request, callback) => {
+                const error = new Error('Iyzico payment service is currently disabled.');
+                callback(error, { status: 'failure', errorMessage: error.message });
+            }
+        },
         _disabled: true
     };
 }
