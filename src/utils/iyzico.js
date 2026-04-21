@@ -11,7 +11,7 @@ if (isEnabled && apiKey && secretKey) {
     iyzico = new Iyzipay({
         apiKey: apiKey,
         secretKey: secretKey,
-        uri: env('IYZICO_BASE_URL', 'https://sandbox-api.iyzipay.com'),
+        uri: env('IYZICO_BASE_URL', 'https://api.iyzipay.com'),
     });
 } else {
     // Return a mock object to prevent startup errors
