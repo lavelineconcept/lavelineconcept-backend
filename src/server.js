@@ -19,7 +19,11 @@ export const startServer = () => {
   app.set('trust proxy', 1);
 
   // Security & Performance
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    frameguard: false
+  }));
   app.use(compression());
 
   // Logging
