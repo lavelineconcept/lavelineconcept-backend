@@ -58,6 +58,9 @@ export const startServer = () => {
     express.json({ type: ['application/json', 'application/vnd.api+json'] }),
   );
 
+  // Iyzico 3D Secure callback sends application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+
 
   app.use(cookieParser());
 
