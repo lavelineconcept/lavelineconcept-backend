@@ -43,6 +43,8 @@ export const startServer = () => {
     'http://localhost:5173',
     'https://lavelineconcept.com',
     'https://lavelineconcept-frontend-git-0ad162-la-veline-concepts-projects.vercel.app',
+    'https://api.iyzipay.com',
+    'https://sandbox-api.iyzipay.com'
   ];
 
   app.use(
