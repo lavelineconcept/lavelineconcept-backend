@@ -65,12 +65,12 @@ export const threedsCallbackController = async (req, res) => {
         const result = await completeThreedsPayment({ paymentId, conversationId });
 
         if (result.success) {
-            return sendBreakoutRedirect(`${clientUrl}/payment/success?orderId=${result.orderId}`);
+            return sendBreakoutRedirect(`${clientUrl}/checkout?status=success&orderId=${result.orderId}`);
         } else {
-            return sendBreakoutRedirect(`${clientUrl}/payment/failed?error=Payment Completion Failed`);
+            return sendBreakoutRedirect(`${clientUrl}/checkout?status=failed&error=Payment Completion Failed`);
         }
     } catch (err) {
-        return sendBreakoutRedirect(`${clientUrl}/payment/failed?error=${err.message}`);
+        return sendBreakoutRedirect(`${clientUrl}/checkout?status=failed&error=${err.message}`);
     }
 };
 
